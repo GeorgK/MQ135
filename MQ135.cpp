@@ -50,7 +50,12 @@ MQ135::MQ135(uint8_t pin, float rload, float rzero, float atmoco2, float vref, f
 */
 /**************************************************************************/
 float MQ135::getCorrectionFactor(float t, float h) {
-  return CORA * t * t - CORB * t + CORC - (h-33.)*CORD;
+  //return CORA * t * t - CORB * t + CORC - (h-33.)*CORD;
+
+  // This formula is reduced from temperature and humidity dependency graph,
+  // found in this datasheet:
+  // http://china-total.com/Product/meter/gas-sensor/MQ135.pdf
+  return (1.30732 - 0.0116044 * t) * (2.20591 - 0.296456 * log(h));
 }
 
 /**************************************************************************/

@@ -31,11 +31,13 @@ v1.0 - First release
 #define PARA 117.185
 #define PARB 2.65797
 
+/*
 /// Parameters to model temperature and humidity dependence
 #define CORA 0.00035
 #define CORB 0.02718
 #define CORC 1.39538
 #define CORD 0.0018
+*/
 
 /// Atmospheric CO2 level for calibration purposes, in PPM.
 /// See http://co2now.org/
