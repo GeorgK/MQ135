@@ -27,9 +27,10 @@ v1.0 - First release
 #define MQ135_RZERO 76.63
 /// Parameters for calculating ppm of CO2 from sensor resistance
 //#define PARA 116.6020682
-//#define PARB 2.769034857
-#define PARA 117.185
-#define PARB 2.65797
+//#define PARB (-2.769034857)
+/// Correlation parameters from Davide Gironi <http://davidegironi.blogspot.ru/2014/01/cheap-co2-meter-using-mq135-sensor-with.html>
+#define PARA 56.0820
+#define PARB (-5.9603)
 
 /*
 /// Parameters to model temperature and humidity dependence
