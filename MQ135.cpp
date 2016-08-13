@@ -138,7 +138,7 @@ float MQ135::getStoredRZero() {
 */
 /**************************************************************************/
 float MQ135::getCorrectedRZero(float t, float h) {
-  return getCorrectedResistance(t, h) * getRZero();
+  return getCorrectedResistance(t, h) * pow((PARA/ATMOCO2), (1./PARB));
 }
 
 /**************************************************************************/
