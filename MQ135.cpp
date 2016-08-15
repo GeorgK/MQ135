@@ -11,6 +11,7 @@ the datasheet but the information there seems to be wrong.
 @section  HISTORY
 
 v1.0 - First release
+v1.1 - Added setter to RZero (A. Stoica - rstoica)
 */
 /**************************************************************************/
 
@@ -20,12 +21,19 @@ v1.0 - First release
 /*!
 @brief  Default constructor
 
+The RZero is initialized to a "common-sense" uncalibrated value of 76.63 kOhms. 
+This needs to be calibrated by the user prior to use the gas sensor.
+
 @param[in] pin  The analog input pin for the readout of the sensor
 */
 /**************************************************************************/
 
 MQ135::MQ135(uint8_t pin) {
   _pin = pin;
+  /// This value is the one the original author set in the define originally
+  /// and varies from sensor to sensor, so it needs calibration and so it 
+  /// has been encapsulated as a modifiable property rather than a hard coded value.
+  RZero = 225;
 }
 
 
@@ -78,7 +86,7 @@ float MQ135::getCorrectedResistance(float t, float h) {
 */
 /**************************************************************************/
 float MQ135::getPPM() {
-  return PARA * pow((getResistance()/RZERO), -PARB);
+  return PARA * pow((getResistance()/RZero), PARB);
 }
 
 /**************************************************************************/
@@ -93,7 +101,7 @@ float MQ135::getPPM() {
 */
 /**************************************************************************/
 float MQ135::getCorrectedPPM(float t, float h) {
-  return PARA * pow((getCorrectedResistance(t, h)/RZERO), -PARB);
+  return PARA * pow((getCorrectedResistance(t, h)/RZero), PARB);
 }
 
 /**************************************************************************/
@@ -104,7 +112,18 @@ float MQ135::getCorrectedPPM(float t, float h) {
 */
 /**************************************************************************/
 float MQ135::getRZero() {
-  return getResistance() * pow((ATMOCO2/PARA), (1./PARB));
+  return getResistance() * pow((PARA/ATMOCO2), (1./PARB));
+}
+
+/**************************************************************************/
+/*!
+@brief  Get the stored RZero resistance of this sensor instance.
+
+@return The sensor resistance RZero in kOhm
+*/
+/**************************************************************************/
+float MQ135::getStoredRZero() {
+  return RZero;
 }
 
 /**************************************************************************/
@@ -119,5 +138,18 @@ float MQ135::getRZero() {
 */
 /**************************************************************************/
 float MQ135::getCorrectedRZero(float t, float h) {
-  return getCorrectedResistance(t, h) * pow((ATMOCO2/PARA), (1./PARB));
+  return getCorrectedResistance(t, h) * pow((PARA/ATMOCO2), (1./PARB));
+}
+
+/**************************************************************************/
+/*!
+@brief  Sets the resistance RZero property of the sensor for calibration purposes. 
+
+Ideally the user should call this method after calibration has taken place.
+
+@param[in] r The calculated RZero value in kOhm.
+*/
+/**************************************************************************/
+void MQ135::setRZero(float r) {
+  RZero = r;
 }
