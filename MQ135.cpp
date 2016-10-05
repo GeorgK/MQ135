@@ -20,12 +20,22 @@ v1.0 - First release
 /*!
 @brief  Default constructor
 
-@param[in] pin  The analog input pin for the readout of the sensor
+@param[in] pin      The analog input pin for the readout of the sensor
+@param[in] rload    Load resistance on board, in KOhms
+@param[in] rzero    Calibration sensor resistance at atmospheric CO2 level, in KOhms
+@param[in] atmoco2  Atmospheric CO2 level for calibration purposes, in PPM
+@param[in] vref     analogRead() reference voltage, in volts
+@param[in] vc       Test voltage applied to the A pins of MQ-135, in volts
 */
 /**************************************************************************/
 
-MQ135::MQ135(uint8_t pin) {
+MQ135::MQ135(uint8_t pin, float rload, float rzero, float atmoco2, float vref, float vc) {
   _pin = pin;
+  _rload = rload;
+  _rzero = rzero;
+  _atmoco2 = atmoco2;
+  _vref = vref;
+  _vc = vc;
 }
 
 
@@ -40,7 +50,12 @@ MQ135::MQ135(uint8_t pin) {
 */
 /**************************************************************************/
 float MQ135::getCorrectionFactor(float t, float h) {
-  return CORA * t * t - CORB * t + CORC - (h-33.)*CORD;
+  //return CORA * t * t - CORB * t + CORC - (h-33.)*CORD;
+
+  // This formula is reduced from temperature and humidity dependency graph,
+  // found in this datasheet:
+  // http://china-total.com/Product/meter/gas-sensor/MQ135.pdf
+  return (1.30732 - 0.0116044 * t) * (2.20591 - 0.296456 * log(h));
 }
 
 /**************************************************************************/
@@ -52,7 +67,13 @@ float MQ135::getCorrectionFactor(float t, float h) {
 /**************************************************************************/
 float MQ135::getResistance() {
   int val = analogRead(_pin);
-  return ((1023./(float)val) * 5. - 1.)*RLOAD;
+  float r;
+
+  //r = ((1023./(float)val) - 1.)*_rload;
+  // or taking Vref and Vc into account:
+  r = ((1023. * _rload * _vc) / ((float)val * _vref)) - _rload;
+
+  return r;
 }
 
 /**************************************************************************/
@@ -78,7 +99,7 @@ float MQ135::getCorrectedResistance(float t, float h) {
 */
 /**************************************************************************/
 float MQ135::getPPM() {
-  return PARA * pow((getResistance()/RZERO), -PARB);
+  return PARA * pow((getResistance()/_rzero), PARB);
 }
 
 /**************************************************************************/
@@ -93,7 +114,7 @@ float MQ135::getPPM() {
 */
 /**************************************************************************/
 float MQ135::getCorrectedPPM(float t, float h) {
-  return PARA * pow((getCorrectedResistance(t, h)/RZERO), -PARB);
+  return PARA * pow((getCorrectedResistance(t, h)/_rzero), PARB);
 }
 
 /**************************************************************************/
@@ -104,7 +125,7 @@ float MQ135::getCorrectedPPM(float t, float h) {
 */
 /**************************************************************************/
 float MQ135::getRZero() {
-  return getResistance() * pow((ATMOCO2/PARA), (1./PARB));
+  return getResistance() * pow((_atmoco2/PARA), (1./-PARB));
 }
 
 /**************************************************************************/
@@ -119,5 +140,5 @@ float MQ135::getRZero() {
 */
 /**************************************************************************/
 float MQ135::getCorrectedRZero(float t, float h) {
-  return getCorrectedResistance(t, h) * pow((ATMOCO2/PARA), (1./PARB));
+  return getCorrectedResistance(t, h) * pow((_atmoco2/PARA), (1./-PARB));
 }
