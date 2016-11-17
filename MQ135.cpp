@@ -41,13 +41,13 @@ MQ135::MQ135(uint8_t pin) {
 /**************************************************************************/
 float MQ135::getCorrectionFactor(float t, float h) {
     // Linearization of the temperature dependency curve under and above 20 degree C
-    // below 20degC: fact = (a * h + b) * t + c * h + d
+    // below 20degC: fact = a * t * t - b * t - (h - 33) * d
     // above 20degC: fact = a * t + b * h + c
     // this assumes a linear dependency on humidity
     if(t < 20){
-        return (CORE * h + CORF) * t + CORG * h + CORH;
+        return CORA * t * t - CORB * t + CORC - (h-33.)*CORD;
     } else {
-        return CORI * t + CORJ * h + CORK;
+        return CORE * t + CORF * h + CORG;
     }
 }
 
