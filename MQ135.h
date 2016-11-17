@@ -34,13 +34,9 @@ v1.0 - First release
 #define CORB 0.02718
 #define CORC 1.39538
 #define CORD 0.0018
-#define CORE 3.20513E-05
-#define CORF -0.024391026
-#define CORG -0.002403846
-#define CORH 1.512660256
-#define CORI -0.003333333
-#define CORJ -0.001923077
-#define CORK 1.130128205
+#define CORE -0.003333333
+#define CORF -0.001923077
+#define CORG 1.130128205
 
 /// Atmospheric CO2 level for calibration purposes
 #define ATMOCO2 397.13
