@@ -19,3 +19,8 @@ This library has:
     - getCorrectedPPM
     - getRZero
     - getCorrectedRZero
+
+More Info
+=====
+
+https://hackaday.io/project/3475-sniffing-trinket/log/12363-mq135-arduino-library
