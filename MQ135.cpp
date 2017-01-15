@@ -40,7 +40,15 @@ MQ135::MQ135(uint8_t pin) {
 */
 /**************************************************************************/
 float MQ135::getCorrectionFactor(float t, float h) {
-  return CORA * t * t - CORB * t + CORC - (h-33.)*CORD;
+    // Linearization of the temperature dependency curve under and above 20 degree C
+    // below 20degC: fact = a * t * t - b * t - (h - 33) * d
+    // above 20degC: fact = a * t + b * h + c
+    // this assumes a linear dependency on humidity
+    if(t < 20){
+        return CORA * t * t - CORB * t + CORC - (h-33.)*CORD;
+    } else {
+        return CORE * t + CORF * h + CORG;
+    }
 }
 
 /**************************************************************************/
@@ -52,7 +60,7 @@ float MQ135::getCorrectionFactor(float t, float h) {
 /**************************************************************************/
 float MQ135::getResistance() {
   int val = analogRead(_pin);
-  return ((1023./(float)val) * 5. - 1.)*RLOAD;
+  return ((1023./(float)val) - 1.)*RLOAD;
 }
 
 /**************************************************************************/
