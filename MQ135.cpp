@@ -11,6 +11,8 @@ the datasheet but the information there seems to be wrong.
 @section  HISTORY
 
 v1.0 - First release
+v1.1 - Add rzero param in constructor,
+       correcting atmospheric CO2 level for 2019 year
 */
 /**************************************************************************/
 
@@ -20,20 +22,20 @@ v1.0 - First release
 /*!
 @brief  Default constructor
 
-@param[in] pin  The analog input pin for the readout of the sensor
+@param[in] pin    The analog input pin for the readout of the sensor
+@param[in] rzero  Calibration resistance at atmospheric CO2 level
 */
 /**************************************************************************/
-
-MQ135::MQ135(uint8_t pin) {
+MQ135::MQ135(uint8_t pin, float rzero) {
+  _rzero = rzero;
   _pin = pin;
 }
-
 
 /**************************************************************************/
 /*!
 @brief  Get the correction factor to correct for temperature and humidity
 
-@param[in] t  The ambient air temperature
+@param[in] t  The ambient air temperature in Celsius
 @param[in] h  The relative humidity
 
 @return The calculated correction factor
@@ -60,7 +62,7 @@ float MQ135::getResistance() {
 @brief  Get the resistance of the sensor, ie. the measurement value corrected
         for temp/hum
 
-@param[in] t  The ambient air temperature
+@param[in] t  The ambient air temperature in Celsius
 @param[in] h  The relative humidity
 
 @return The corrected sensor resistance kOhm
@@ -78,7 +80,7 @@ float MQ135::getCorrectedResistance(float t, float h) {
 */
 /**************************************************************************/
 float MQ135::getPPM() {
-  return PARA * pow((getResistance()/RZERO), -PARB);
+  return PARA * pow((getResistance()/_rzero), -PARB);
 }
 
 /**************************************************************************/
@@ -86,14 +88,14 @@ float MQ135::getPPM() {
 @brief  Get the ppm of CO2 sensed (assuming only CO2 in the air), corrected
         for temp/hum
 
-@param[in] t  The ambient air temperature
+@param[in] t  The ambient air temperature in Celsius
 @param[in] h  The relative humidity
 
 @return The ppm of CO2 in the air
 */
 /**************************************************************************/
 float MQ135::getCorrectedPPM(float t, float h) {
-  return PARA * pow((getCorrectedResistance(t, h)/RZERO), -PARB);
+  return PARA * pow((getCorrectedResistance(t, h)/_rzero), -PARB);
 }
 
 /**************************************************************************/
@@ -112,7 +114,7 @@ float MQ135::getRZero() {
 @brief  Get the corrected resistance RZero of the sensor for calibration
         purposes
 
-@param[in] t  The ambient air temperature
+@param[in] t  The ambient air temperature in Celsius
 @param[in] h  The relative humidity
 
 @return The corrected sensor resistance RZero in kOhm

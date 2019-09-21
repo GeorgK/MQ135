@@ -11,6 +11,8 @@ the datasheet but the information there seems to be wrong.
 @section  HISTORY
 
 v1.0 - First release
+v1.1 - Add rzero param in constructor,
+       correcting atmospheric CO2 level for 2019 year
 */
 /**************************************************************************/
 #ifndef MQ135_H
@@ -23,10 +25,7 @@ v1.0 - First release
 
 /// The load resistance on the board
 #define RLOAD 10.0
-/// Calibration resistance at atmospheric CO2 level
-#ifndef RZERO
-#define RZERO 76.63
-#endif
+
 /// Parameters for calculating ppm of CO2 from sensor resistance
 #define PARA 116.6020682
 #define PARB 2.769034857
@@ -38,14 +37,16 @@ v1.0 - First release
 #define CORD 0.0018
 
 /// Atmospheric CO2 level for calibration purposes
-#define ATMOCO2 397.13
+/// On august 2019 from https://www.co2.earth
+#define ATMOCO2 409.95
 
 class MQ135 {
  private:
   uint8_t _pin;
+  float _rzero;
 
  public:
-  MQ135(uint8_t pin);
+  MQ135(uint8_t pin, float rzero=76.63);
   float getCorrectionFactor(float t, float h);
   float getResistance();
   float getCorrectedResistance(float t, float h);
