@@ -41,9 +41,10 @@ v1.0 - First release
 class MQ135 {
  private:
   uint8_t _pin;
+  float _rzero;
 
  public:
-  MQ135(uint8_t pin);
+  MQ135(uint8_t pin, float rzero = RZERO);
   float getCorrectionFactor(float t, float h);
   float getResistance();
   float getCorrectedResistance(float t, float h);
