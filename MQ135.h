@@ -22,7 +22,7 @@ v1.0 - First release
 #endif
 
 /// The load resistance on the board
-#define RLOAD 10.0
+#define RLOAD 22.0
 /// Calibration resistance at atmospheric CO2 level
 #define RZERO 76.63
 /// Parameters for calculating ppm of CO2 from sensor resistance
@@ -36,7 +36,7 @@ v1.0 - First release
 #define CORD 0.0018
 
 /// Atmospheric CO2 level for calibration purposes
-#define ATMOCO2 397.13
+#define ATMOCO2 400.13
 
 class MQ135 {
  private:
