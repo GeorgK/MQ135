@@ -36,7 +36,7 @@ v1.0 - First release
 #define CORD 0.0018
 
 /// Atmospheric CO2 level for calibration purposes
-#define ATMOCO2 397.13
+#define ATMOCO2 414.47
 
 class MQ135 {
  private:
