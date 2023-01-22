@@ -1,0 +1,22 @@
+####################################
+# Syntax Coloring Map For MQ135 Sensor
+####################################
+
+####################
+# Datatypes (KEYWORD1)
+####################
+
+MQ135 KEYWORD1
+
+
+######################
+# Functions (KEYWORD2)
+######################
+
+getCorrectionFactor KEYWORD2
+getResistance KEYWORD2
+getCorrectedResistance KEYWORD2
+getPPM KEYWORD2
+getCorrectedPPM KEYWORD2
+getRZero KEYWORD2
+getCorrectedRZero KEYWORD2
